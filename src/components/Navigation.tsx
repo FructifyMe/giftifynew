@@ -9,8 +9,9 @@ export default function Navigation() {
     <nav className="border-b">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/dashboard" className="text-2xl font-bold text-primary">
-            Giftify
+          <Link to="/dashboard" className="flex items-center space-x-2 text-2xl font-bold text-primary">
+            <Gift className="w-7 h-7" />
+            <span>Giftify</span>
           </Link>
           
           <div className="flex items-center space-x-8">

@@ -28,10 +28,10 @@ export default function Dashboard() {
             >
               <Users className="w-8 h-8 text-primary mb-4" />
               <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                Join Group
+                Create Group
               </h3>
               <p className="text-muted-foreground">
-                Connect with family and friends
+                Start a new group for gifting
               </p>
             </Link>
           </div>

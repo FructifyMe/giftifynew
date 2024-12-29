@@ -3,16 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from './supabase'
 import type { User } from '@supabase/supabase-js'
 
-interface AuthError {
-  message: string
-  status?: number
-}
-
 interface AuthContextType {
   user: User | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
-  signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>
+  signIn: (email: string, password: string) => Promise<{ error: string | null }>
+  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
 }
 
@@ -31,65 +26,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     // Listen for changes on auth state (logged in, signed out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      const user = session?.user ?? null
-      setUser(user)
-
-      // Create/update profile when user signs in
-      if (user && (event === 'SIGNED_IN' || event === 'USER_UPDATED')) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: user.id,
-            email: user.email,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: 'id' })
-
-        if (profileError) {
-          console.error('Error updating profile:', profileError)
-        }
-      }
-
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email)
+      setUser(session?.user ?? null)
       setLoading(false)
+      
+      if (event === 'SIGNED_IN') {
+        navigate('/dashboard')
+      } else if (event === 'SIGNED_OUT') {
+        navigate('/')
+      }
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [navigate])
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            full_name: `${firstName} ${lastName}`,
+          }
+        }
       })
 
       if (error) throw error
 
-      // Create initial profile
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-
-        if (profileError) {
-          console.error('Error creating profile:', profileError)
-          return { error: { message: 'Failed to create user profile' } }
-        }
+      // After successful signup, show a success message or redirect
+      if (data) {
+        return { error: null }
       }
 
-      return { error: null }
+      return { error: 'Something went wrong during sign up' }
     } catch (error: any) {
-      return {
-        error: {
-          message: error.message || 'An error occurred during sign up',
-          status: error.status
-        }
-      }
+      console.error('Error signing up:', error.message)
+      return { error: error.message }
     }
   }
 
@@ -102,15 +78,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error
 
-      navigate('/dashboard')
       return { error: null }
     } catch (error: any) {
-      return {
-        error: {
-          message: error.message || 'An error occurred during sign in',
-          status: error.status
-        }
-      }
+      console.error('Error signing in:', error.message)
+      return { error: error.message }
     }
   }
 
@@ -118,9 +89,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
-      navigate('/')
-    } catch (error) {
-      console.error('Error signing out:', error)
+    } catch (error: any) {
+      console.error('Error signing out:', error.message)
     }
   }
 

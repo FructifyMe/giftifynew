@@ -1,6 +1,6 @@
 import { Gift, Users, LineChart, ArrowRight, GiftIcon } from 'lucide-react';
 import { useAuth } from '../lib/auth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 
 const features = [
   {
@@ -21,7 +21,7 @@ const features = [
 ];
 
 export default function Landing() {
-  const { signInWithGoogle, user } = useAuth();
+  const { user } = useAuth();
 
   if (user) {
     return <Navigate to="/dashboard" replace />;
@@ -37,12 +37,12 @@ export default function Landing() {
               <GiftIcon className="w-8 h-8 text-primary" />
               <span className="text-2xl font-bold text-primary">Giftify</span>
             </div>
-            <button
-              onClick={signInWithGoogle}
+            <Link
+              to="/signin"
               className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
               Sign In
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -61,13 +61,13 @@ export default function Landing() {
                 Giftify simplifies gift management with smart wishlists, group coordination,
                 and price tracking. Never miss the perfect gift again.
               </p>
-              <button
-                onClick={signInWithGoogle}
+              <Link
+                to="/signup"
                 className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-lg shadow-lg hover:shadow-xl"
               >
                 Start Now
                 <ArrowRight className="ml-2" size={20} />
-              </button>
+              </Link>
             </div>
             <div className="relative">
               <div className="relative w-full h-[500px]">
@@ -94,12 +94,10 @@ export default function Landing() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="p-8 rounded-xl border border-primary/10 hover:border-primary transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-xl group"
+                className="p-8 rounded-xl border border-primary/10 hover:border-primary/30 transition-colors bg-card"
               >
-                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4 text-primary">{feature.title}</h3>
+                <feature.icon className="w-12 h-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground">{feature.description}</p>
               </div>
             ))}
@@ -108,40 +106,23 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="hero-gradient absolute top-0 right-0 w-1/2 h-full -z-10 opacity-10" />
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-4xl font-bold">
-              Ready to Transform Your
-              <span className="text-primary block mt-2">Gift-Giving Experience?</span>
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Join thousands of users who have made gifting stress-free with Giftify.
-            </p>
-            <button
-              onClick={signInWithGoogle}
-              className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-lg shadow-lg hover:shadow-xl"
-            >
-              Get Started
-              <ArrowRight className="ml-2" size={20} />
-            </button>
-          </div>
+      <section className="py-20 bg-primary/5">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-8">
+            Ready to Start Gifting?
+          </h2>
+          <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Join Giftify today and make every gift-giving occasion special. Create your first wishlist in minutes.
+          </p>
+          <Link
+            to="/signup"
+            className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-lg"
+          >
+            Create Your Account
+            <ArrowRight className="ml-2" size={20} />
+          </Link>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-12 border-t bg-white/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <GiftIcon className="w-6 h-6 text-primary" />
-            <span className="text-xl font-bold text-primary">Giftify</span>
-          </div>
-          <div className="text-center text-muted-foreground">
-            <p> 2024 Giftify. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

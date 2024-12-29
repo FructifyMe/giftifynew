@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Gift } from 'lucide-react';
 import { useAuth } from '../../lib/auth';
 
 export default function SignIn() {
-  const navigate = useNavigate();
   const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,16 +15,12 @@ export default function SignIn() {
     setLoading(true);
     setError(null);
 
-    const { error } = await signIn(email, password);
+    const { error: signInError } = await signIn(email, password);
 
-    if (error) {
-      setError(error.message);
+    if (signInError) {
+      setError(signInError);
       setLoading(false);
-      return;
     }
-
-    // Redirect to dashboard on success
-    navigate('/dashboard');
   };
 
   return (
@@ -78,7 +73,9 @@ export default function SignIn() {
           </div>
 
           {error && (
-            <div className="text-sm text-destructive text-center">{error}</div>
+            <div className="p-3 rounded-md bg-destructive/10 text-sm text-destructive text-center">
+              {error}
+            </div>
           )}
 
           <button
@@ -92,9 +89,9 @@ export default function SignIn() {
 
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{' '}
-          <a href="/signup" className="font-medium text-primary hover:text-primary/90">
+          <Link to="/signup" className="font-medium text-primary hover:text-primary/90">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

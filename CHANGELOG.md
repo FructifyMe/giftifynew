@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2024-12-29
+
+### Added
+- Group creation functionality
+  - Create new groups with name and description
+  - View list of created groups
+  - Generate and share invite links for groups
+- Environment variable support for deployment URLs
+- Row Level Security (RLS) policies for groups
+- Database schema for groups and invites
+
+### Changed
+- Simplified group management system
+- Updated dashboard to show group creation instead of join
+- Enhanced error handling for group operations
+- Improved invite link generation with environment-aware URLs
+
+### Fixed
+- RLS policy recursion issues
+- Group creation permission errors
+- Invite link generation for different environments
+
 ## [0.2.0] - 2024-12-29
 
 ### Added
